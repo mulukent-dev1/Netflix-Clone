@@ -1,39 +1,77 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import "./Home.css";
-import hero_banner from "../../assets/hero_banner.jpg";
 import hero_title from "../../assets/hero_title.png";
 import play_icon from "../../assets/play_icon.png";
 import info_icon from "../../assets/info_icon.png";
 import TitleCards from "../../components/TitleCards/TitleCards";
 import Footer from "../../components/Footer/Footer";
+import axios from "../../utils/axios.js";
+import requests from "../../utils/requests.js";
 
 const Home = () => {
+  const [movie, setMovie] = useState({});
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const request = await axios.get(requests.fetchNetflixOriginals);
+        console.log(request);
+        setMovie(
+          request.data.results[
+            Math.floor(Math.random() * request.data.results.length)
+          ]
+        );
+      } catch (error) {
+        console.log("error", error);
+      }
+    })();
+  }, []);
+
+  function truncate(str, n) {
+    return str?.length > n ? str.substr(0, n - 1) + "..." : str;
+  }
+
   return (
     <div className="home">
       <Navbar />
-      <div className="hero">
-        <img src={hero_banner} alt="" className="banner-img" />
-        <div className="hero-caption">
-          <img src={hero_title} alt="" className="caption-img" />
-          <p>
-            Discovering his ties to a secret ancient order, a young man living
-            in modern Istanbul embarks on a quest to save the city from an
-            importal enemy.
+      
+      {/* Banner Section with Dynamic Background */}
+      <div
+        className="banner"
+        style={{
+          backgroundSize: "cover",
+          backgroundImage: `url('https://image.tmdb.org/t/p/original${movie?.backdrop_path}')`,
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className="banner_contents">
+          <h1 className="banner_title">
+            {movie?.title || movie?.name || movie?.original_name}
+          </h1>
+          <p className="banner_description">
+            {truncate(movie?.overview, 150)}
           </p>
-          <div className="hero-btns">
-            <button className="btn">
+          <div className="banner_buttons">
+            <button className="banner_button play">
               <img src={play_icon} alt="" />
               Play
             </button>
-            <button className="btn dark-btn">
+            <button className="banner_button">
               <img src={info_icon} alt="" />
               More Info
             </button>
           </div>
-          <TitleCards />
         </div>
       </div>
+
+      {/* TitleCards Section */}
+      <div className="title-cards-container">
+        <TitleCards />
+      </div>
+
+      {/* More Cards Section */}
       <div className="more-cards">
         <TitleCards title={"Blockbuster Movies"} category={"top_rated"} />
         <TitleCards title={"Only on Netflix"} category={"popular"} />
