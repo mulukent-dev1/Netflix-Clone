@@ -27,7 +27,7 @@ A responsive Netflix UI clone built with React, showcasing modern front-end tech
 
 🔧 Setup
 
-git clone https://github.com/your-username/netflix-clone.git
+git clone https://github.com/mulukent-dev1/netflix-clone.git
 cd netflix-clone
 npm install
 npm run dev
